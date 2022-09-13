@@ -56,7 +56,7 @@ function vitePluginWasmPack(
   // 'my_crate_bg.wasm': { path: 'node_modules/my_crate/my_crate_bg.wasm', isNodeModule: true }
   modulePaths.forEach((cratePath) => {
     const wasmFile = wasmFilename(cratePath);
-    const wasmDirectory = path.dirname(require.resolve(cratePath));
+    const wasmDirectory = path.dirname(require.resolve(path.join(cratePath, 'package.json')));
     wasmMap.set(wasmFile, {
       path: path.join(wasmDirectory, wasmFile),
       isNodeModule: true
@@ -96,7 +96,7 @@ function vitePluginWasmPack(
     async buildStart(_inputOptions) {
       const prepareBuild = async (cratePath: string, isNodeModule: boolean) => {
         const pkgPath = isNodeModule
-          ? path.dirname(require.resolve(cratePath))
+          ? path.dirname(require.resolve(path.join(cratePath, 'package.json')))
           : path.join(cratePath, pkg);
         const crateName = path.basename(cratePath);
         if (!fs.existsSync(pkgPath)) {
